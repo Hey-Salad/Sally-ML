@@ -7032,3 +7032,59 @@ aside#device-panel,
     font-size: 9px !important;
     gap: 4px !important;
 }
+
+/* mobile-labs: keep a single visible device by removing any leftover CSS shell chrome */
+.device-mirror-panel,
+.device-frame-wrap,
+.phone-frame-wrap {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+}
+
+#phone-frame,
+.phone-frame,
+.s10-frame {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+#phone-frame::before,
+#phone-frame::after,
+.phone-frame::before,
+.phone-frame::after,
+.s10-frame::before,
+.s10-frame::after,
+.s10-earpiece,
+.s10-camera,
+.s10-camera-pill,
+.s10-power-button,
+.phone-vol-buttons,
+.phone-buttons-left,
+.phone-vol-button,
+.phone-button,
+.vol-buttons,
+.vol-btn {
+    display: none !important;
+    content: none !important;
+}
+
+/* Live device stream iframe */
+.device-stream-iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: inherit;
+  display: block;
+  background: #000;
+}
+.phone-screen-area {
+  position: relative;
+  overflow: hidden;
+}

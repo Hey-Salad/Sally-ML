@@ -1,4 +1,85 @@
-import type { AppTarget, DeviceRecord, RunEvent } from './types';
+import type { AppTarget, DeviceRecord, RunEvent, RunnerRecord, SessionRecord } from './types';
+
+export const runners: RunnerRecord[] = [
+  {
+    id: 'runner-android-ws-scrcpy',
+    name: 'Android Lab Runner',
+    provider: 'ws-scrcpy',
+    location: 'local',
+    status: 'online',
+    host: 'hs-chilu@heysalad-ai-01',
+    platforms: ['android'],
+    capabilities: [
+      { name: 'stream_video', status: 'available', detail: 'H264/MSE device stream' },
+      { name: 'tap', status: 'available', detail: 'ADB + scrcpy control channel' },
+      { name: 'swipe', status: 'available', detail: 'ADB + scrcpy control channel' },
+      { name: 'type_text', status: 'available', detail: 'Console/prompting flow in stream UI' },
+      { name: 'prompt_engine', status: 'available', detail: 'GPT-5.4 composer in Sally Lab' },
+      { name: 'record_video', status: 'available', detail: 'Local Xvfb + ffmpeg recording' },
+      { name: 'fetch_otp', status: 'available', detail: 'Cloudflare Access via M365/Graph' },
+      { name: 'build_app', status: 'available', detail: 'Workspace/dist build commands' },
+      { name: 'launch_app', status: 'available', detail: 'Open stream surface from device list' },
+    ],
+  },
+  {
+    id: 'runner-ios-iphone-remote',
+    name: 'iPhone Remote Runner',
+    provider: 'iphone-remote',
+    location: 'remote',
+    status: 'online',
+    host: 'macbook-pro.local',
+    platforms: ['ios'],
+    capabilities: [
+      { name: 'stream_canvas', status: 'available', detail: 'DVT screenshot canvas stream' },
+      { name: 'tap', status: 'available', detail: 'WebDriverAgent touch injection' },
+      { name: 'swipe', status: 'available', detail: 'WebDriverAgent gesture injection' },
+      { name: 'hardware_buttons', status: 'available', detail: 'Home/Lock/Volume controls' },
+      { name: 'record_video', status: 'planned', detail: 'Capture currently lives outside the runner contract' },
+      { name: 'launch_app', status: 'planned', detail: 'App/session launch should be normalized via Sally-SDK' },
+    ],
+  },
+  {
+    id: 'runner-cloud-control-plane',
+    name: 'Sally Cloud Control Plane',
+    provider: 'sally-sdk',
+    location: 'cloud',
+    status: 'online',
+    host: 'api-sally-sdk.heysalad.app',
+    platforms: ['android', 'ios'],
+    capabilities: [
+      { name: 'prompt_engine', status: 'planned', detail: 'Agent routing should dispatch into platform runners' },
+      { name: 'record_video', status: 'available', detail: 'Artifact index and session metadata are already centralized' },
+      { name: 'build_app', status: 'planned', detail: 'Build dispatch should become a typed job contract' },
+    ],
+  },
+];
+
+export const sessions: SessionRecord[] = [
+  {
+    id: 'session-android-stream',
+    deviceId: 'R58M20GVCWZ',
+    runnerId: 'runner-android-ws-scrcpy',
+    platform: 'android',
+    mode: 'interactive',
+    entryPoint: 'local-runner',
+    state: 'streaming',
+    currentSurface: 'Console + Stream SM-G975F',
+    startedAt: '2026-03-19T17:11:00Z',
+    lastEventAt: '2026-03-19T17:18:00Z',
+  },
+  {
+    id: 'session-ios-remote',
+    deviceId: '00008030-000259E936BB802E',
+    runnerId: 'runner-ios-iphone-remote',
+    platform: 'ios',
+    mode: 'verification',
+    entryPoint: 'dashboard',
+    state: 'ready',
+    currentSurface: 'Remote canvas control',
+    startedAt: '2026-03-19T17:19:00Z',
+    lastEventAt: '2026-03-19T17:20:00Z',
+  },
+];
 
 export const devices: DeviceRecord[] = [
   {
@@ -15,6 +96,50 @@ export const devices: DeviceRecord[] = [
     sessionState: 'streaming',
     currentSurface: 'Console + Stream SM-G975F',
     battery: 74,
+    runnerId: 'runner-android-ws-scrcpy',
+    runnerProvider: 'ws-scrcpy',
+    activeSessionId: 'session-android-stream',
+    channels: [
+      {
+        kind: 'stream',
+        provider: 'ws-scrcpy',
+        transport: 'WebSocket + MSE',
+        status: 'connected',
+        source: 'H264 Converter / stream page',
+        endpoint: 'wss://android-lab.heysalad.app/?action=proxy-adb&remote=tcp%3A8886&udid=R58M20GVCWZ',
+      },
+      {
+        kind: 'control',
+        provider: 'ws-scrcpy',
+        transport: 'ADB + scrcpy control',
+        status: 'connected',
+        source: 'Sally Lab device controls',
+      },
+      {
+        kind: 'build',
+        provider: 'ws-scrcpy',
+        transport: 'local process',
+        status: 'ready',
+        source: 'npm run dist',
+      },
+      {
+        kind: 'dev_server',
+        provider: 'ws-scrcpy',
+        transport: 'HTTP',
+        status: 'ready',
+        source: 'systemctl --user restart ws-scrcpy',
+      },
+    ],
+    capabilities: [
+      { name: 'stream_video', status: 'available', detail: 'Primary Android stream surface' },
+      { name: 'tap', status: 'available' },
+      { name: 'swipe', status: 'available' },
+      { name: 'type_text', status: 'available' },
+      { name: 'prompt_engine', status: 'available' },
+      { name: 'record_video', status: 'available' },
+      { name: 'fetch_otp', status: 'available' },
+      { name: 'build_app', status: 'available' },
+    ],
   },
   {
     id: '00008030-000259E936BB802E',
@@ -30,6 +155,48 @@ export const devices: DeviceRecord[] = [
     sessionState: 'ready',
     currentSurface: 'Remote canvas control',
     battery: 61,
+    runnerId: 'runner-ios-iphone-remote',
+    runnerProvider: 'iphone-remote',
+    activeSessionId: 'session-ios-remote',
+    channels: [
+      {
+        kind: 'stream',
+        provider: 'iphone-remote',
+        transport: 'FastAPI WebSocket',
+        status: 'connected',
+        source: 'DVT screenshot canvas',
+        endpoint: 'ws://localhost:8765/ws',
+      },
+      {
+        kind: 'control',
+        provider: 'iphone-remote',
+        transport: 'WebDriverAgent HTTP',
+        status: 'connected',
+        source: 'WDA tap/swipe/button bridge',
+      },
+      {
+        kind: 'build',
+        provider: 'iphone-remote',
+        transport: 'xcodebuild + local process',
+        status: 'ready',
+        source: 'WebDriverAgentRunner + start.sh',
+      },
+      {
+        kind: 'dev_server',
+        provider: 'sally-sdk',
+        transport: 'Cloudflare Tunnel',
+        status: 'planned',
+        source: 'Named tunnel and normalized session dispatch',
+      },
+    ],
+    capabilities: [
+      { name: 'stream_canvas', status: 'available', detail: 'Current iOS remote stream mode' },
+      { name: 'tap', status: 'available' },
+      { name: 'swipe', status: 'available' },
+      { name: 'hardware_buttons', status: 'available' },
+      { name: 'record_video', status: 'planned' },
+      { name: 'launch_app', status: 'planned' },
+    ],
   },
 ];
 
@@ -39,22 +206,28 @@ export const appTarget: AppTarget = {
   repoRoot: '/home/hs-chilu/android-lab/ws-scrcpy',
   framework: 'React Native / Expo-compatible mobile workspace',
   entryMode: 'Cloud control plane + local device runners',
+  supportedPlatforms: ['android', 'ios'],
+  runnerIds: runners.map((runner) => runner.id),
   devServer: {
     kind: 'metro',
     command: 'npm run dist && systemctl --user restart ws-scrcpy',
+    host: '127.0.0.1',
   },
   buildSurfaces: [
     {
+      platform: 'android',
       label: 'Android build surface',
       path: '/home/hs-chilu/android-lab/ws-scrcpy',
       command: 'npm run dist',
     },
     {
+      platform: 'ios',
       label: 'iOS runner surface',
       path: '~/iphone-remote',
       command: 'bash start.sh',
     },
     {
+      platform: 'cloud',
       label: 'Cloud control plane',
       path: '/home/hs-chilu/android-lab/ws-scrcpy/cloudflare/browserless-sessions',
       command: 'npm run deploy',

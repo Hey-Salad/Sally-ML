@@ -115,6 +115,12 @@ const SHELL_CONFIGS: Record<DeviceShellKey, ShellConfig> = {
   },
 };
 
+
+const STREAM_URLS: Record<DeviceShellKey, string> = {
+  ios: "https://iphone-stream.heysalad.app",
+  android: "",
+};
+
 function App() {
   const [theme, setTheme] = useState<ThemeMode>('light');
   const [activePanel, setActivePanel] = useState<PanelName>('console');
@@ -436,7 +442,17 @@ function App() {
                   style={frameStyle}
                 >
                   <div id="phone-screen" className="phone-screen phone-screen-area device-mirror-screen">
-                    <div className="device-stream-placeholder" aria-hidden="true"></div>
+                    {STREAM_URLS[deviceShell] ? (
+                      <iframe
+                        src={STREAM_URLS[deviceShell]}
+                        className="device-stream-iframe"
+                        title="Device stream"
+                        allow="pointer-lock"
+                        style={{width:"100%",height:"100%",border:"none",borderRadius:"inherit",display:"block"}}
+                      />
+                    ) : (
+                      <div className="device-stream-placeholder" aria-hidden="true" />
+                    )}
                   </div>
                   <img className="phone-frame-overlay" src={shell.overlay[theme]} alt="" draggable={false} aria-hidden="true" />
                 </div>
